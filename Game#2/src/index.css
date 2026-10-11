@@ -1,0 +1,259 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Bungee", "Arial Black", Impact, sans-serif;
+  --font-body: "Outfit", ui-sans-serif, "Segoe UI", sans-serif;
+
+  --color-dusk-950: #070f18;
+  --color-dusk-900: #0a1622;
+  --color-dusk-850: #0d1e2d;
+  --color-dusk-800: #12293c;
+  --color-dusk-700: #1a3d54;
+  --color-dusk-600: #24536e;
+
+  --color-jade-600: #1a6a5f;
+  --color-jade-500: #2a9d8f;
+  --color-jade-400: #46b8a8;
+  --color-jade-300: #7fd9c8;
+
+  --color-sun-500: #f4a259;
+  --color-sun-400: #f7bd7f;
+  --color-ember-500: #e76f51;
+  --color-berry-500: #ef476f;
+  --color-cream-100: #fff3d6;
+  --color-cream-200: #ffe1ac;
+
+  --animate-drift: drift 26s linear infinite;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: #070f18;
+  color: #e8f1f5;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+button {
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- layout ---------- */
+
+.game-frame {
+  aspect-ratio: 2 / 3;
+  width: min(100%, calc((100vh - 15.5rem) * 2 / 3));
+  width: min(100%, calc((100dvh - 15.5rem) * 2 / 3));
+  min-width: 15rem;
+  will-change: transform;
+}
+
+@media (max-width: 1023px) {
+  .game-frame {
+    width: min(100%, calc((100vh - 12rem) * 2 / 3));
+    width: min(100%, calc((100dvh - 12rem) * 2 / 3));
+  }
+}
+
+/* short / landscape viewports: give the board almost the full height */
+@media (max-height: 560px) {
+  .game-frame {
+    width: min(100%, calc((100vh - 4.5rem) * 2 / 3));
+    width: min(100%, calc((100dvh - 4.5rem) * 2 / 3));
+  }
+}
+
+.safe-pad {
+  padding-bottom: 1rem;
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+.no-touch {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ---------- textures ---------- */
+
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+.scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.045) 0px,
+    rgba(255, 255, 255, 0.045) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.panel-notch {
+  clip-path: polygon(
+    14px 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    14px 100%,
+    0 calc(100% - 14px),
+    0 14px
+  );
+}
+
+.text-outline {
+  -webkit-text-stroke: 2px #07121c;
+  paint-order: stroke fill;
+}
+
+/* ---------- animations ---------- */
+
+@keyframes drift {
+  from {
+    transform: translate3d(-10%, 0, 0);
+  }
+  to {
+    transform: translate3d(110%, 0, 0);
+  }
+}
+
+@keyframes feather-fall {
+  0% {
+    transform: translate3d(0, -12vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.55;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate3d(6vw, 108vh, 0) rotate(540deg);
+    opacity: 0;
+  }
+}
+
+.feather {
+  animation: feather-fall linear infinite;
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0.86) translateY(14px);
+    opacity: 0;
+  }
+  62% {
+    transform: scale(1.03) translateY(-3px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.pop-in {
+  animation: pop-in 0.42s cubic-bezier(0.22, 1.2, 0.36, 1) both;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(18px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-up {
+  animation: slide-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes tap-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.07);
+    opacity: 1;
+  }
+}
+
+.tap-pulse {
+  animation: tap-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes ring-out {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+.ring-out {
+  animation: ring-out 1.8s ease-out infinite;
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-9px) rotate(3deg);
+  }
+}
+
+.bob {
+  animation: bob 2.4s ease-in-out infinite;
+}
+
+@keyframes glow-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.glow-breathe {
+  animation: glow-breathe 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feather,
+  .tap-pulse,
+  .ring-out,
+  .bob,
+  .glow-breathe {
+    animation: none !important;
+  }
+}
